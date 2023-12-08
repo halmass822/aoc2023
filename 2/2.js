@@ -65,3 +65,27 @@ rl.on('line', (line) => {
 rl.on('close', () => {
     console.log(`part 1: ` + counter);
 })
+
+//part 2
+
+function getPowerOfMinimumCubes(gameObject) {
+    let blueMax = 0, redMax = 0, greenMax = 0;
+    gameObject.sets.forEach((set) => {
+        blueMax = Math.max(set.blueCubes, blueMax);
+        redMax = Math.max(set.redCubes, redMax,);
+        greenMax = Math.max(set.greenCubes, greenMax);
+    });
+    return blueMax * redMax * greenMax;
+};
+
+let counter2 = 0;
+
+rl.on('line', (line) => {
+    const game = parseGame(line);
+    const power = getPowerOfMinimumCubes(game);
+    counter2 += power;
+});
+
+rl.on('close', () => {
+    console.log('part 2: ' + counter2);
+})
