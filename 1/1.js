@@ -24,7 +24,7 @@ rl.on('close', () => {
     console.log(`part 1: ` + counter);
 })
 
-//part 2
+//part 2 - didn't work :(
 
 
 function getCalibrationNumberAdvanced(inputString) {

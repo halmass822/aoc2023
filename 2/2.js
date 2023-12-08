@@ -1,3 +1,12 @@
+const fs = require("fs");
+const readline = require("readline");
+
+const filepath = "./2.txt";
+const rl = readline.createInterface({
+    input: fs.createReadStream(filepath),
+    crlfDelay: Infinity
+});
+
 function parseGame(inputString) {
     const gameId = inputString.match(/\d+/)[0];
     // console.log(gameId);
@@ -30,20 +39,29 @@ function parseGame(inputString) {
         });
     });
 
-    console.log(output);
+    // console.log(output);
     return output;
 };
 
 function checkIfGamePossible(gameObject, maxBlue, maxRed, maxGreen) {
     const sets = gameObject.sets;
     return sets.every((x) => {
-        return x.blueCubes <= maxBlue && x.redCubes <= maxRed && x.greenCubes <= maxGreen 
+        return (x.blueCubes <= maxBlue && x.redCubes <= maxRed && x.greenCubes <= maxGreen)
     });
 };
 
+let counter = 0;
 
-parseGame("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green");
-parseGame("Game 11: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green");
+rl.on('line', (line) => {
+    const game = parseGame(line)
+    if(checkIfGamePossible(
+        game,
+        14,12,13
+    )){
+        counter += Number(game.gameId); 
+    } 
+})
 
-// /[^;]+;/
-// /\d+ blue|green|red/
+rl.on('close', () => {
+    console.log(`part 1: ` + counter);
+})
