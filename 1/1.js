@@ -1,51 +1,52 @@
 const fs = require("fs");
 const readline = require("readline");
 
-const filepath = "./input.txt";
+const filepath = "./1.txt";
 const rl = readline.createInterface({
     input: fs.createReadStream(filepath),
     crlfDelay: Infinity
 });
 
-function getCalibrationNumber(inputString) {
-    const inputArray = inputString.split("");
-    const firstNumber = Number( inputArray.find(e => /\d/.test(e)) );
-    const lastNumber = Number( inputArray.findLast(e => /\d/.test(e)) );
-    return (firstNumber * 10) + lastNumber;
+function parseCalibration(input) {
+    const nums = [...input.matchAll(/\d/g)];
+    return Number(nums[0]) * 10 + Number(nums[nums.length - 1]);
 };
 
-counter = 0;
+function parseCalibration2(input) {
+    const nums = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+    const numsIndex = [...input.matchAll(/(?=one|two|three|four|five|six|seven|eight|nine|\d)/g)];
 
-rl.on('line', (line) => {
-    counter += getCalibrationNumber(line);
-});
+    const firstNumber = input.slice(numsIndex[0].index).match(/one|two|three|four|five|six|seven|eight|nine|\d/g)[0];
+    const secondNumber = input.slice(numsIndex[numsIndex.length - 1].index).match(/one|two|three|four|five|six|seven|eight|nine|\d/g)[0];
 
-rl.on('close', () => {
-    console.log(`part 1: ` + counter);
-})
+    const firstNumberAsNumber = nums.indexOf(firstNumber) + 1 > 0 ? nums.indexOf(firstNumber) + 1 : Number(firstNumber);
+    const secondNumberAsNumber = nums.indexOf(secondNumber) + 1 > 0 ? nums.indexOf(secondNumber) + 1 : Number(secondNumber);
 
-//part 2 - didn't work :(
+    return firstNumberAsNumber * 10 + secondNumberAsNumber;
+}
 
-
-function getCalibrationNumberAdvanced(inputString) {
-
-    const numbersArray = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-    const numbersRegex = /one|two|three|four|five|six|seven|eight|nine|\d/g;
-    
-    const numbers = [ ...inputString.matchAll(numbersRegex)]; //array of all the numbers
-    
-    firstNumber = numbers[0][0].length > 1 ? numbersArray.indexOf(numbers[0][0]) + 1 : Number(numbers[0][0]) //if first number is a word then return the value, otherwise return the number
-    lastNumber = numbers[numbers.length - 1][0].length > 1 ? numbersArray.indexOf(numbers[numbers.length - 1][0]) + 1 : Number(numbers[numbers.length -1][0]);
-
-    return firstNumber * 10 + lastNumber;
-};
-
+let counter = 0;
 let counter2 = 0;
 
-rl.on('line', (line) => {
-    counter2 += getCalibrationNumberAdvanced(line);
+rl.on("line", (line) => {
+    counter += parseCalibration(line);
+    counter2 += parseCalibration2(line);
 });
 
-rl.on('close', () => {
-    console.log(`part 2: ` + counter2);
-})
+rl.on("close", () => {
+    console.log("part 1: " + counter);
+    console.log("part 2: " + counter2);
+});
+
+
+// `two1nine
+// eightwothree
+// abcone2threexyz
+// xtwone3four
+// 4nineeightseven2
+// zoneight234
+// 7pqrstsixteen`.split("\n").forEach((x) => {
+//     counter2 += parseCalibration2(x)
+// })
+
+// console.log(counter2);
