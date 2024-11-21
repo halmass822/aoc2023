@@ -1,11 +1,11 @@
-// const fs = require("fs");
-// const readline = require("readline");
+const fs = require("fs");
+const readline = require("readline");
 
-// const filepath = "./2.txt";
-// const rl = readline.createInterface({
-//     input: fs.createReadStream(filepath),
-//     crlfDelay: Infinity
-// });
+const filepath = "2.txt";
+const rl = readline.createInterface({
+    input: fs.createReadStream(filepath),
+    crlfDelay: Infinity
+});
 
 // function parseGame(inputString) {
 //     const gameId = inputString.match(/\d+/)[0];
@@ -80,43 +80,52 @@
 
 // let counter2 = 0;
 
-// rl.on('line', (line) => {
-//     const game = parseGame(line);
-//     const power = getPowerOfMinimumCubes(game);
-//     counter2 += power;
-// });
-
-// rl.on('close', () => {
-//     console.log('part 2: ' + counter2);
-// })
 
 function parseGame(line, maxred, maxblue, maxgreen) {
     const commaIndex = line.indexOf(":");
     const gameId = Number(line.slice(5, commaIndex));
     let isPossible = true
-
+    
     const redMatches = [...line.matchAll(/\d+ red/g)].forEach((x) => {
-        if(Number(x[0].match(/\d/g)) > maxred) isPossible = false
+        if(Number(x[0].match(/\d+/g)[0]) > maxred) isPossible = false
     });
     const blueMatches = [...line.matchAll(/\d+ blue/g)].forEach((x) => {
-        if(Number(x[0].match(/\d/g)) > maxblue) isPossible = false
+        if(Number(x[0].match(/\d+/g)[0]) > maxblue) isPossible = false
     });
     const greenMatches = [...line.matchAll(/\d+ green/g)].forEach((x) => {
-        if(Number(x[0].match(/\d/g)) > maxgreen) isPossible = false
+        if(Number(x[0].match(/\d+/g)[0]) > maxgreen) isPossible = false
     });
 
     return isPossible ? gameId : 0; 
-
+    
 }
 
-let counter = 0;
+function parseGame2(line) {
+    let [minred, minblue, mingreen] = [0,0,0];
 
-`Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
-Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
-Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`.split("\n").forEach((x) => {
-    counter += parseGame(x,12,14,13);
+    const redMatches = [...line.matchAll(/\d+ red/g)].forEach((x) => {
+        minred = Math.max(Number(x[0].match(/\d+/g)[0]), minred);
+    });
+    const blueMatches = [...line.matchAll(/\d+ blue/g)].forEach((x) => {
+        minblue = Math.max(Number(x[0].match(/\d+/g)[0]), minblue);
+    });
+    const greenMatches = [...line.matchAll(/\d+ green/g)].forEach((x) => {
+        mingreen = Math.max(Number(x[0].match(/\d+/g)[0]), mingreen);
+    });
+
+    return minred * minblue * mingreen;
+}
+
+parseGame2("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green");
+
+let [counter, counter2] = [0,0];
+
+rl.on('line', (line) => {
+    counter += parseGame(line, 12, 14, 13);
+    counter2 += parseGame2(line);
+});
+
+rl.on('close', () => {
+    console.log('part 1: ' + counter);
+    console.log('part 2: ' + counter2);
 })
-
-console.log(counter);
